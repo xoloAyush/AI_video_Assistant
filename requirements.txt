@@ -1,0 +1,64 @@
+# ==============================
+# Backend / API
+# ==============================
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic==2.8.2
+python-dotenv==1.0.1
+
+# ==============================
+# UI
+# ==============================
+streamlit==1.38.0
+
+# ==============================
+# Audio Acquisition
+# ==============================
+yt-dlp==2024.8.6
+ffmpeg-python==0.2.0
+pydub==0.25.1
+
+# ==============================
+# Speech-to-Text
+# ==============================
+faster-whisper==1.0.3
+torch==2.4.1
+torchaudio==2.4.1
+
+# ==============================
+# Hindi -> English Translation
+# ==============================
+deep-translator==1.11.4
+langdetect==1.0.9
+
+# ==============================
+# LangChain + Mistral
+# ==============================
+langchain==0.3.1
+langchain-core==0.3.6
+langchain-community==0.3.1
+langchain-mistralai==0.2.0
+mistralai==1.0.3
+
+# ==============================
+# RAG
+# ==============================
+chromadb==0.5.5
+sentence-transformers==3.0.1
+langchain-huggingface==0.1.0
+transformers==4.44.2
+huggingface-hub==0.24.6
+
+# ==============================
+# Export
+# ==============================
+reportlab==4.2.2
+fpdf2==2.7.9
+
+# ==============================
+# Utilities
+# ==============================
+numpy==1.26.4
+requests==2.32.3
+tqdm==4.66.5
