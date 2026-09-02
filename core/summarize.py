@@ -1,0 +1,78 @@
+from langchain_mistralai.chat_models import ChatMistralAI
+from langchain_text_splitters import CharacterTextSplitter
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnableLambda
+from dotenv import load_dotenv
+import os   
+
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+
+def get_llm():
+    return ChatMistralAI(
+    model="mistral-small-latest",
+    api_key=os.getenv("MISTRAL_API_KEY"),
+    temperature=0,
+)
+
+def split_transcript(transcript:str)->list[str]:
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=3000, chunk_overlap=300)
+
+    return text_splitter.split_text(transcript)
+
+
+def summarize_text(transcript:str)->str:
+    
+    llm = get_llm()
+
+    model_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system","Summarize this portion of a meeting transcript concisely."),
+
+            ("human","{text}"),
+        ]
+    )
+
+    model_chain = model_prompt | llm | StrOutputParser() 
+
+    
+    chunks = split_transcript(transcript)
+
+    chat_summarizes = [model_chain.invoke({"text": chunk}) for chunk in chunks]
+
+    combined = "\n\n".join(chat_summarizes)
+
+    combined_prompt = ChatPromptTemplate([
+        ("system",
+            "You are an expert meeting summarizer. Combine these partial summaries "
+            "into one final professional meeting summary in bullet points.",),
+
+        ("human","{text}"),
+    ])
+
+    combined_chain = (
+        RunnablePassthrough() | RunnableLambda(lambda x: {"text":x}) | combined_prompt | llm | StrOutputParser()
+    )
+
+    return combined_chain.invoke(combined)
+
+def generate_title(transcript:str)->str:
+
+    llm = get_llm()
+
+    title_chain = (
+
+        RunnablePassthrough | RunnableLambda(lambda x:{"text":x}) | 
+        ChatPromptTemplate([
+            (
+                "system",
+                "Based on the meeting transcript, generate a short professional meeting title "
+                "(max 8 words). Only return the title, nothing else.",
+            ),
+            ("human", "{text}"),
+        ]) | llm | StrOutputParser()
+    )
+    return title_chain.invoke(transcript[:200])
+
+    
