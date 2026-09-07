@@ -1,13 +1,10 @@
-from langchain_mistralai.chat_models import ChatMistralAI
-from langchain_text_splitters import CharacterTextSplitter
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.runnables import RunnableLambda
-from dotenv import load_dotenv
-import os   
-
+from langchain_mistralai import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
+import os 
 
 def get_llm():
     return ChatMistralAI(
@@ -22,7 +19,7 @@ def split_transcript(transcript:str)->list[str]:
     return text_splitter.split_text(transcript)
 
 
-def summarize_text(transcript:str)->str:
+def summarize(transcript:str)->str:
     
     llm = get_llm()
 
@@ -43,7 +40,7 @@ def summarize_text(transcript:str)->str:
 
     combined = "\n\n".join(chat_summarizes)
 
-    combined_prompt = ChatPromptTemplate([
+    combined_prompt = ChatPromptTemplate.from_messages([
         ("system",
             "You are an expert meeting summarizer. Combine these partial summaries "
             "into one final professional meeting summary in bullet points.",),
@@ -63,8 +60,8 @@ def generate_title(transcript:str)->str:
 
     title_chain = (
 
-        RunnablePassthrough | RunnableLambda(lambda x:{"text":x}) | 
-        ChatPromptTemplate([
+        RunnablePassthrough() | RunnableLambda(lambda x:{"text":x}) | 
+        ChatPromptTemplate.from_messages([
             (
                 "system",
                 "Based on the meeting transcript, generate a short professional meeting title "

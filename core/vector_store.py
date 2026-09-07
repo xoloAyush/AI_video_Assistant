@@ -13,7 +13,7 @@ def get_embeddings():
     return HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL,model_kwargs={"device": 'cpu'})
 
 
-def build_vector_db(text:str)->Chroma:
+def build_vector_store(text:str)->Chroma:
 
     embeddings = get_embeddings()
 
@@ -33,7 +33,7 @@ def build_vector_db(text:str)->Chroma:
     return vector_store
 
 
-def load_vector_db()->Chroma:
+def load_vector_store()->Chroma:
     embeddings = get_embeddings()
     return Chroma(
         collection_name=COLLECTION_NAME,
@@ -41,6 +41,6 @@ def load_vector_db()->Chroma:
         persist_directory=CHROMA_DIR
     )
 
-def get_retreiver(vector_store:Chroma, k:int=4)->Chroma:
+def get_retriever(vector_store:Chroma, k:int=4)->Chroma:
     
     return vector_store.as_retriever(search_kwargs={"k": k})

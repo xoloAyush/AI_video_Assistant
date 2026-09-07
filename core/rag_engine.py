@@ -13,13 +13,13 @@ def get_llm():
      temperature=0.2
     )
 
-def format_docs(docs:list[Document]) -> str:
+def format_docs(docs:list) -> str:
 
     return "\n\n".join([doc.page_content for doc in docs])
 
 def build_rag_chain(transcript:str)->str:
 
-    vector_store = build_vector_db(transcript)
+    vector_store = build_vector_store(transcript)
     retriever = get_retriever(vector_store)
     llm = get_llm()
 
@@ -54,7 +54,7 @@ Context from meeting transcript:
 
 def load_rag_chain():
 
-    vector_store = build_vector_db()
+    vector_store = load_vector_store()
     retriever = get_retriever()
     llm = get_llm()
 
@@ -86,7 +86,7 @@ Context from meeting transcript:
     
     return rag_chain
 
-def ask_question(rag_chain:Runnable, question:str)->str:
+def ask_question(rag_chain, question:str)->str:
 
     print(f"Question : {question}")
 
