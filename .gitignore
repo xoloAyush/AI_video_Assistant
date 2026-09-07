@@ -22,3 +22,6 @@ transcriptions/
 # OS
 .DS_Store
 Thumbs.db
+
+# vector db
+vector_db/
